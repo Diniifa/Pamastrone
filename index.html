@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Undangan</title>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: black;
+  font-family: Arial, sans-serif;
+}
+
+/* Fullscreen video */
+#videoContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  z-index: 10;
+  transition: opacity 1s ease;
+}
+
+#myVideo {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+}
+
+/* QR Container */
+#qrContainer {
+  display: none;
+  text-align: center;
+  width: 100%;
+  height: 100vh;
+  background: black;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+#qrContainer.active {
+  display: block;
+  opacity: 1;
+}
+
+/* QR Image */
+#qrImage {
+  width: 60vw;
+  max-width: 300px;
+  border-radius: 12px;
+  transform: scale(0);
+  transition: transform 0.8s ease;
+  margin-top: 20vh;
+}
+
+#qrImage.zoom {
+  transform: scale(1);
+}
+
+/* Text */
+#qrContainer h3 {
+  color: white;
+  font-size: 22px;
+  margin-top: 40px;
+}
+
+/* Unmute overlay */
+#unmuteOverlay {
+  position: fixed;
+  top:0; left:0;
+  width:100vw; height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index: 20;
+  background: rgba(0,0,0,0.5);
+}
+
+#unmuteBtn {
+  padding: 15px 25px;
+  font-size: 20px;
+  border:none;
+  border-radius:10px;
+  background:#fff;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<!-- Full Video -->
+<div id="videoContainer">
+  <video id="myVideo" autoplay muted playsinline>
+    <source src="Pamastrone.mp4" type="video/mp4">
+  </video>
+</div>
+
+<!-- Unmute Overlay -->
+<div id="unmuteOverlay">
+  <button id="unmuteBtn">Tap untuk mendengar suara</button>
+</div>
+
+<!-- QR Page -->
+<div id="qrContainer">
+  <h3>Silakan Scan QR Anda</h3>
+  <img id="qrImage" src="" alt="QR">
+</div>
+
+<script>
+const durasiVideo = 47;
+
+// Ambil file dari URL
+const params = new URLSearchParams(window.location.search);
+const file = params.get("file");  // langsung nama file .png
+
+// Elemen
+const videoContainer = document.getElementById("videoContainer");
+const myVideo = document.getElementById("myVideo");
+const unmuteOverlay = document.getElementById("unmuteOverlay");
+const unmuteBtn = document.getElementById("unmuteBtn");
+const qrContainer = document.getElementById("qrContainer");
+const qrImage = document.getElementById("qrImage");
+
+// Unmute button
+unmuteBtn.addEventListener("click", () => {
+  myVideo.muted = false;
+  unmuteOverlay.style.display = "none";
+});
+
+// Setelah video selesai tampilkan QR
+setTimeout(() => {
+
+  if (file) {
+    qrImage.src = file;  // langsung pake nama file asli
+  } else {
+    qrImage.src = "default.png"; // optional
+  }
+
+  // Fade out video
+  videoContainer.style.opacity = 0;
+
+  setTimeout(() => {
+    videoContainer.style.display = "none";
+    qrContainer.classList.add("active");
+
+    setTimeout(() => {
+      qrImage.classList.add("zoom");
+    }, 300);
+
+    document.body.style.overflow = "auto";
+  }, 1000);
+
+}, durasiVideo * 1000);
+</script>
+
+</body>
+</html>
